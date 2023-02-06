@@ -57,6 +57,12 @@ public class YuGoHomePage {
     private WebElement signOutButton;
     @FindBy(how = How.CSS, css = ".errorMessage")
     private WebElement signInErrorMessage;
+    @FindBy(how = How.CSS, css = "app-navbar [routerlink='/users-accounts']")
+    private WebElement adminNavbarUserAccounts;
+    @FindBy(how = How.CSS, css = "app-navbar [routerlink='/favorite']")
+    private WebElement passengerNavbarFavourite;
+    @FindBy(how = How.CSS, css = "mat-button-toggle-group")
+    private WebElement driverOnlineButton;
 
 
     public YuGoHomePage(WebDriver webDriver){
@@ -73,6 +79,15 @@ public class YuGoHomePage {
         clickSignInButton();
     }
 
+    public boolean isAdminLoggedIn(){
+        return waiter.until(ExpectedConditions.elementToBeClickable(adminNavbarUserAccounts)).isDisplayed();
+    }
+    public boolean isPassengerLoggedIn(){
+        return waiter.until(ExpectedConditions.elementToBeClickable(passengerNavbarFavourite)).isDisplayed();
+    }
+    public boolean isDriverLoggedIn(){
+        return waiter.until(ExpectedConditions.elementToBeClickable(driverOnlineButton)).isDisplayed();
+    }
     public void clickSelectDepartureIcon(){
         waiter.until(ExpectedConditions.elementToBeClickable(selectDepartureIcon)).click();
     }
