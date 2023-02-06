@@ -30,8 +30,9 @@ public class SeleniumTest {
     }
 
     @Test
-    void firstTest(){
+    void createRideSuccessfulTest(){
         YuGoHomePage homePage = new YuGoHomePage(webDriver);
+        homePage.loginAction("pera.peric@email.com", "Password123");
         homePage.clickSelectDepartureIcon();
         homePage.clickOnMap(-10, 20);
         homePage.clickSelectDestinationIcon();
@@ -39,8 +40,43 @@ public class SeleniumTest {
         homePage.clickRouteContinueButton();
         homePage.selectLuxVehicle();
         homePage.clickVehicleTypeContinueButton();
+        homePage.addPassenger("darko.darkovic@email.com");
+        homePage.clickAddPassengersContinueButton();
+        homePage.clickTimePickerContinueButton();
     }
+    @Test
+    void createRideUnsuccessfulTest(){
+        YuGoHomePage homePage = new YuGoHomePage(webDriver);
+        homePage.loginAction("pera.peric@email.com", "Password123");
 
+        homePage.enterDeparture("Subotica");
+        homePage.pickRecommendedAddress();
+
+        homePage.enterDestination("Kikinda");
+        homePage.pickRecommendedAddress();
+
+        homePage.clickRouteContinueButton();
+
+        homePage.selectLuxVehicle();
+        homePage.clickVehicleTypeContinueButton();
+        homePage.clickAddPassengersContinueButton();
+        homePage.clickTimePickerContinueButton();
+    }
+    @Test
+    void pickLocationWithoutMarkersTest(){
+        YuGoHomePage homePage = new YuGoHomePage(webDriver);
+
+        homePage.enterDeparture("Vojvode Misica, Novi Sad");
+        String expectedDeparture = homePage.pickRecommendedAddress();
+        String checkDeparture = homePage.getDepartureAddressText();
+
+        homePage.enterDestination("3bir, Novi Sad");
+        String expectedDestination = homePage.pickRecommendedAddress();
+        String checkDestination = homePage.getDestinationAddressText();
+
+        Assertions.assertEquals(checkDeparture, expectedDeparture);
+        Assertions.assertEquals(checkDestination, expectedDestination);
+    }
     @Test
     void successfulLoginTest(){
         YuGoHomePage homePage = new YuGoHomePage(webDriver);
