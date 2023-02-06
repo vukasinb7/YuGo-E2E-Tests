@@ -10,6 +10,8 @@ import selenium.pages.YuGoHomePage;
 
 public class SeleniumTest {
     private WebDriver webDriver;
+
+    private WebDriver webDriver1;
     private String PASSENGER_EMAIL="pera.peric@email.com";
     private String PASSENGER_PASSWORD="Password123";
     private String DRIVER_EMAIL="perislav.peric@email.com";
@@ -26,13 +28,17 @@ public class SeleniumTest {
 
     @AfterEach
     void flush(){
-        //webDriver.quit();
+        webDriver.quit();
     }
 
     @Test
     void createRideSuccessfulTest(){
         YuGoHomePage homePage = new YuGoHomePage(webDriver);
-        homePage.loginAction("pera.peric@email.com", "Password123");
+
+        boolean isOpened= homePage.verifyPageOpened();
+        Assertions.assertTrue(isOpened);
+
+        homePage.loginAction(PASSENGER_EMAIL, PASSENGER_PASSWORD);
         homePage.clickSelectDepartureIcon();
         homePage.clickOnMap(-10, 20);
         homePage.clickSelectDestinationIcon();
@@ -47,7 +53,11 @@ public class SeleniumTest {
     @Test
     void createRideUnsuccessfulTest(){
         YuGoHomePage homePage = new YuGoHomePage(webDriver);
-        homePage.loginAction("pera.peric@email.com", "Password123");
+
+        boolean isOpened= homePage.verifyPageOpened();
+        Assertions.assertTrue(isOpened);
+
+        homePage.loginAction(PASSENGER_EMAIL, PASSENGER_PASSWORD);
 
         homePage.enterDeparture("Subotica");
         homePage.pickRecommendedAddress();
@@ -66,6 +76,9 @@ public class SeleniumTest {
     void pickLocationWithoutMarkersTest(){
         YuGoHomePage homePage = new YuGoHomePage(webDriver);
 
+        boolean isOpened= homePage.verifyPageOpened();
+        Assertions.assertTrue(isOpened);
+
         homePage.enterDeparture("Vojvode Misica, Novi Sad");
         String expectedDeparture = homePage.pickRecommendedAddress();
         String checkDeparture = homePage.getDepartureAddressText();
@@ -80,6 +93,10 @@ public class SeleniumTest {
     @Test
     void successfulAdminLoginTest(){
         YuGoHomePage homePage = new YuGoHomePage(webDriver);
+
+        boolean isOpened= homePage.verifyPageOpened();
+        Assertions.assertTrue(isOpened);
+
         homePage.loginAction(ADMIN_EMAIL, ADMIN_PASSWORD);
         Assertions.assertTrue(homePage.isSignOutButtonClickable());
         Assertions.assertTrue(homePage.isAdminLoggedIn());
@@ -87,6 +104,10 @@ public class SeleniumTest {
     @Test
     void successfulPassengerLoginTest(){
         YuGoHomePage homePage = new YuGoHomePage(webDriver);
+
+        boolean isOpened= homePage.verifyPageOpened();
+        Assertions.assertTrue(isOpened);
+
         homePage.loginAction(PASSENGER_EMAIL, PASSENGER_PASSWORD);
         Assertions.assertTrue(homePage.isSignOutButtonClickable());
         Assertions.assertTrue(homePage.isPassengerLoggedIn());
@@ -95,6 +116,10 @@ public class SeleniumTest {
     @Test
     void successfulDriverLoginTest(){
         YuGoHomePage homePage = new YuGoHomePage(webDriver);
+
+        boolean isOpened= homePage.verifyPageOpened();
+        Assertions.assertTrue(isOpened);
+
         homePage.loginAction(DRIVER_EMAIL, DRIVER_PASSWORD);
         Assertions.assertTrue(homePage.isSignOutButtonClickable());
         Assertions.assertTrue(homePage.isDriverLoggedIn());
@@ -103,8 +128,171 @@ public class SeleniumTest {
     @Test
     void unsuccessfulLoginTest(){
         YuGoHomePage homePage = new YuGoHomePage(webDriver);
+
+        boolean isOpened= homePage.verifyPageOpened();
+        Assertions.assertTrue(isOpened);
+
         homePage.loginAction("awpaodw@dwadpmaw.com","fdsgsfdg");
         Assertions.assertNotEquals("", homePage.getSignInErrorMessage());
+    }
+
+    @Test
+    void endOfRideNoReview(){
+        webDriver1 = new ChromeDriver();
+
+        YuGoHomePage homePagePassenger = new YuGoHomePage(webDriver);
+        YuGoHomePage homePageDriver = new YuGoHomePage(webDriver1);
+        boolean isOpened= homePagePassenger.verifyPageOpened();
+        Assertions.assertTrue(isOpened);
+
+        boolean isOpenedDriver= homePageDriver.verifyPageOpened();
+        Assertions.assertTrue(isOpenedDriver);
+
+        homePagePassenger.loginAction(PASSENGER_EMAIL,PASSENGER_PASSWORD);
+        homePageDriver.loginAction(DRIVER_EMAIL,DRIVER_PASSWORD);
+
+        homePagePassenger.reserveRide();
+
+        homePageDriver.driverAcceptedRide();
+        homePageDriver.driverStartedRide();
+        homePageDriver.driverEndedRide();
+        Assertions.assertTrue(homePagePassenger.isDialogPresent());
+        homePagePassenger.exitDialog();
+        Assertions.assertTrue(homePagePassenger.isDialogClosed());
+
+        webDriver1.quit();
+    }
+
+    @Test
+    void pressEmptyDialog(){
+        webDriver1 = new ChromeDriver();
+
+        YuGoHomePage homePagePassenger = new YuGoHomePage(webDriver);
+        YuGoHomePage homePageDriver = new YuGoHomePage(webDriver1);
+        boolean isOpened= homePagePassenger.verifyPageOpened();
+        Assertions.assertTrue(isOpened);
+        boolean isOpenedDriver= homePageDriver.verifyPageOpened();
+        Assertions.assertTrue(isOpenedDriver);
+
+        homePagePassenger.loginAction(PASSENGER_EMAIL,PASSENGER_PASSWORD);
+        homePageDriver.loginAction(DRIVER_EMAIL,DRIVER_PASSWORD);
+
+        homePagePassenger.reserveRide();
+
+        homePageDriver.driverAcceptedRide();
+        homePageDriver.driverStartedRide();
+        homePageDriver.driverEndedRide();
+        Assertions.assertTrue(homePagePassenger.isDialogPresent());
+        homePagePassenger.submitVehicleReview();
+        Assertions.assertTrue(homePagePassenger.isVehicleButtonPresent());
+        homePagePassenger.clickNextCarousel();
+        homePagePassenger.submitRideReview();
+        Assertions.assertTrue(homePagePassenger.isRideButtonPresent());
+        homePagePassenger.exitDialog();
+        Assertions.assertTrue(homePagePassenger.isDialogClosed());
+
+        webDriver1.quit();
+    }
+
+    @Test
+    void pressOnlyTextDialog(){
+        webDriver1 = new ChromeDriver();
+
+        YuGoHomePage homePagePassenger = new YuGoHomePage(webDriver);
+        YuGoHomePage homePageDriver = new YuGoHomePage(webDriver1);
+        boolean isOpened= homePagePassenger.verifyPageOpened();
+        Assertions.assertTrue(isOpened);
+        boolean isOpenedDriver= homePageDriver.verifyPageOpened();
+        Assertions.assertTrue(isOpenedDriver);
+
+        homePagePassenger.loginAction(PASSENGER_EMAIL,PASSENGER_PASSWORD);
+        homePageDriver.loginAction(DRIVER_EMAIL,DRIVER_PASSWORD);
+
+        homePagePassenger.reserveRide();
+
+        homePageDriver.driverAcceptedRide();
+        homePageDriver.driverStartedRide();
+        homePageDriver.driverEndedRide();
+        Assertions.assertTrue(homePagePassenger.isDialogPresent());
+        homePagePassenger.enterVehicleReviewText();
+        homePagePassenger.submitVehicleReview();
+        Assertions.assertTrue(homePagePassenger.isVehicleButtonPresent());
+        homePagePassenger.clickNextCarousel();
+        homePagePassenger.enterRideReviewText();
+        homePagePassenger.submitRideReview();
+        Assertions.assertTrue(homePagePassenger.isRideButtonPresent());
+        homePagePassenger.exitDialog();
+        Assertions.assertTrue(homePagePassenger.isDialogClosed());
+
+        webDriver1.quit();
+    }
+
+    @Test
+    void pressOnlyStarDialog(){
+        webDriver1 = new ChromeDriver();
+
+        YuGoHomePage homePagePassenger = new YuGoHomePage(webDriver);
+        YuGoHomePage homePageDriver = new YuGoHomePage(webDriver1);
+        boolean isOpened= homePagePassenger.verifyPageOpened();
+        Assertions.assertTrue(isOpened);
+        boolean isOpenedDriver= homePageDriver.verifyPageOpened();
+        Assertions.assertTrue(isOpenedDriver);
+
+        homePagePassenger.loginAction(PASSENGER_EMAIL,PASSENGER_PASSWORD);
+        homePageDriver.loginAction(DRIVER_EMAIL,DRIVER_PASSWORD);
+
+        homePagePassenger.reserveRide();
+
+        homePageDriver.driverAcceptedRide();
+        homePageDriver.driverStartedRide();
+        homePageDriver.driverEndedRide();
+        Assertions.assertTrue(homePagePassenger.isDialogPresent());
+        homePagePassenger.enterVehicleReviewStar();
+        homePagePassenger.submitVehicleReview();
+        Assertions.assertFalse(homePagePassenger.isVehicleButtonPresent());
+        homePagePassenger.clickNextCarousel();
+        homePagePassenger.enterRideReviewStar();
+        homePagePassenger.submitRideReview();
+        Assertions.assertFalse(homePagePassenger.isRideButtonPresent());
+        homePagePassenger.exitDialog();
+        Assertions.assertTrue(homePagePassenger.isDialogClosed());
+
+        webDriver1.quit();
+    }
+
+    @Test
+    void enterFullReview(){
+        webDriver1 = new ChromeDriver();
+
+        YuGoHomePage homePagePassenger = new YuGoHomePage(webDriver);
+        YuGoHomePage homePageDriver = new YuGoHomePage(webDriver1);
+        boolean isOpened= homePagePassenger.verifyPageOpened();
+        Assertions.assertTrue(isOpened);
+        boolean isOpenedDriver= homePageDriver.verifyPageOpened();
+        Assertions.assertTrue(isOpenedDriver);
+
+        homePagePassenger.loginAction(PASSENGER_EMAIL,PASSENGER_PASSWORD);
+        homePageDriver.loginAction(DRIVER_EMAIL,DRIVER_PASSWORD);
+
+        homePagePassenger.reserveRide();
+
+        homePageDriver.driverAcceptedRide();
+        homePageDriver.driverStartedRide();
+        homePageDriver.driverEndedRide();
+        Assertions.assertTrue(homePagePassenger.isDialogPresent());
+        homePagePassenger.enterVehicleReviewStar();
+        homePagePassenger.enterVehicleReviewText();
+        homePagePassenger.submitVehicleReview();
+        Assertions.assertFalse(homePagePassenger.isVehicleButtonPresent());
+        homePagePassenger.clickNextCarousel();
+        homePagePassenger.enterRideReviewStar();
+        homePagePassenger.enterRideReviewText();
+        homePagePassenger.submitRideReview();
+        Assertions.assertFalse(homePagePassenger.isRideButtonPresent());
+        homePagePassenger.exitDialog();
+        Assertions.assertTrue(homePagePassenger.isDialogClosed());
+
+        webDriver1.quit();
     }
     
 }

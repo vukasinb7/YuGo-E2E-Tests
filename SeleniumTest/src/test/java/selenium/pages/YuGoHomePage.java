@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 public class YuGoHomePage {
     private static final String PAGE_URL = "http://localhost:4200/home";
@@ -36,7 +37,11 @@ public class YuGoHomePage {
     private WebElement destinationTextInputField;
     @FindBy(how = How.CSS, css = "app-ride-pick-destination form>div:nth-child(3)>ul>li:nth-child(1) p")
     private WebElement recommendedAddressesListItem;
-    // ==================== Pick vehicle type form =====================
+    @FindBy(how = How.CSS, css = "app-ride-pick-destination h1")
+    private WebElement title;
+
+
+    // ===================== Pick vehicle type form =====================
     @FindBy(how = How.XPATH, xpath = "//h2[text()='LUX']/../../..")
     private WebElement luxVehicleCard;
     @FindBy(how = How.XPATH, xpath = "//h2[text()='STANDARD']/../../..")
@@ -84,6 +89,37 @@ public class YuGoHomePage {
     @FindBy(how = How.XPATH, xpath = "//app-searching-driver-screen/div/h1")
     private WebElement searchDriverMessage;
 
+    // ===================== Driver ====================
+
+
+    @FindBy(how = How.CSS, css = "#accept-ride-button")
+    private WebElement acceptRideButton;
+    @FindBy(how = How.CSS, css = "#start-ride-driver")
+    private WebElement startRideButton;
+    @FindBy(how = How.CSS, css = "#end-ride-driver")
+    private WebElement endRideButton;
+
+
+    // ==================== Passenger ====================
+    @FindBy(how = How.CSS, css = "app-history-review-card-passenger")
+    private WebElement reviewDialog;
+
+    @FindBy(how = How.CSS, css = "#submit-vehicle")
+    private WebElement vehicleReviewSubmit;
+    @FindBy(how = How.CSS, css = "#submit-ride")
+    private WebElement rideReviewSubmit;
+    @FindBy(how = How.CSS, css = "#vehicle-review-textarea")
+    private WebElement vehicleTextArea;
+    @FindBy(how = How.CSS, css = "#ride-review-textarea")
+    private WebElement rideTextArea;
+    @FindBy(how = How.CSS, css = "#l2v")
+    private WebElement vehicleStar;
+    @FindBy(how = How.CSS, css = "#l2r")
+    private WebElement rideStar;
+    @FindBy(how = How.CSS, css = "#click-next")
+    private WebElement nextCarousel;
+
+
     public YuGoHomePage(WebDriver webDriver){
         this.webDriver = webDriver;
         actions = new Actions(webDriver);
@@ -107,6 +143,13 @@ public class YuGoHomePage {
     public boolean isDriverLoggedIn(){
         return waiter.until(ExpectedConditions.elementToBeClickable(driverOnlineButton)).isDisplayed();
     }
+    public boolean verifyPageOpened(){
+        boolean isOpened = (new WebDriverWait(webDriver, Duration.ofSeconds(10)))
+                .until(ExpectedConditions.textToBePresentInElement(title, "Where can we pick you up?"));
+
+        return isOpened;
+    }
+
     public void clickSelectDepartureIcon(){
         waiter.until(ExpectedConditions.elementToBeClickable(selectDepartureIcon)).click();
     }
@@ -177,4 +220,84 @@ public class YuGoHomePage {
         webDriver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
         return waiter.until(ExpectedConditions.visibilityOf(searchDriverMessage)).getAttribute("value");
     }
+
+    public void driverOnlineIfNeeded(){
+        if (!driverOnlineButton.getAttribute("aria-pressed").equals("true"))
+            driverOnlineButton.click();
+    }
+    public void driverAcceptedRide(){
+        waiter.until(ExpectedConditions.elementToBeClickable(acceptRideButton)).click();
+    }
+
+    public void driverStartedRide(){
+        waiter.until(ExpectedConditions.elementToBeClickable(startRideButton)).click();
+    }
+    public void driverEndedRide(){
+        waiter.until(ExpectedConditions.elementToBeClickable(endRideButton)).click();
+    }
+
+    public boolean isDialogPresent(){
+        return waiter.until(ExpectedConditions.elementToBeClickable(reviewDialog)).isDisplayed();
+    }
+    public boolean isDialogClosed(){
+        return webDriver.findElements(By.id("app-history-review-card-passenger")).size() == 0;
+    }
+
+    public void exitDialog(){
+        Actions actions= new Actions(webDriver);
+        actions.sendKeys(Keys.ESCAPE).perform();
+    }
+
+    public void submitVehicleReview(){
+        waiter.until(ExpectedConditions.elementToBeClickable(vehicleReviewSubmit)).click();
+    }
+
+    public boolean isVehicleButtonPresent(){
+        return  vehicleReviewSubmit.isDisplayed();
+    }
+
+    public void submitRideReview(){
+        waiter.until(ExpectedConditions.elementToBeClickable(rideReviewSubmit)).click();
+    }
+
+    public boolean isRideButtonPresent(){
+        return rideReviewSubmit.isDisplayed();
+    }
+
+
+
+    public void enterVehicleReviewText(){
+        waiter.until(ExpectedConditions.elementToBeClickable(vehicleTextArea)).sendKeys("Recenzija");
+    }
+
+    public void enterRideReviewText(){
+        waiter.until(ExpectedConditions.elementToBeClickable(rideTextArea)).sendKeys("Recenzija");
+    }
+
+    public void enterVehicleReviewStar(){
+        waiter.until(ExpectedConditions.elementToBeClickable(vehicleStar)).click();
+    }
+
+    public void enterRideReviewStar(){
+        waiter.until(ExpectedConditions.elementToBeClickable(rideStar)).click();
+    }
+
+    public void clickNextCarousel(){
+        waiter.until(ExpectedConditions.elementToBeClickable(nextCarousel)).click();
+    }
+
+    public void reserveRide(){
+        enterDeparture("Crvena Cesma Sremska Mitrovica");
+        pickRecommendedAddress();
+
+        enterDestination("Milosa Obilica Sremska Mitrovica");
+        pickRecommendedAddress();
+        clickRouteContinueButton();
+        selectLuxVehicle();
+        clickVehicleTypeContinueButton();
+        addPassenger("darko.darkovic@email.com");
+        clickAddPassengersContinueButton();
+        clickTimePickerContinueButton();
+    }
+
 }
