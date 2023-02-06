@@ -10,6 +10,12 @@ import selenium.pages.YuGoHomePage;
 
 public class SeleniumTest {
     private WebDriver webDriver;
+    private String PASSENGER_EMAIL="pera.peric@email.com";
+    private String PASSENGER_PASSWORD="Password123";
+    private String DRIVER_EMAIL="perislav.peric@email.com";
+    private String DRIVER_PASSWORD="Password123";
+    private String ADMIN_EMAIL="marko.markovic@email.com";
+    private String ADMIN_PASSWORD="Password123";
 
     @BeforeEach
     void init(){
@@ -38,20 +44,15 @@ public class SeleniumTest {
     @Test
     void successfulLoginTest(){
         YuGoHomePage homePage = new YuGoHomePage(webDriver);
-        homePage.clickSignInFormButton();
-        homePage.enterEmail("marko.markovic@email.com");
-        homePage.enterPassword("Password123");
-        homePage.clickSignInButton();
+        homePage.loginAction(PASSENGER_EMAIL,PASSENGER_PASSWORD);
         Assertions.assertTrue(homePage.isSignOutButtonClickable());
     }
 
     @Test
     void unsuccessfulLoginTest(){
         YuGoHomePage homePage = new YuGoHomePage(webDriver);
-        homePage.clickSignInFormButton();
-        homePage.enterEmail("awpaodw@dwadpmaw.com");
-        homePage.enterPassword("fdsgsfdg");
-        homePage.clickSignInButton();
+        homePage.loginAction("awpaodw@dwadpmaw.com","fdsgsfdg");
         Assertions.assertNotEquals("", homePage.getSignInErrorMessage());
     }
+    
 }

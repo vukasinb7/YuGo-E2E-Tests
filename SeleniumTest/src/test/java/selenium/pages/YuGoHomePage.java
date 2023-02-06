@@ -66,6 +66,12 @@ public class YuGoHomePage {
         webDriver.get(PAGE_URL);
         PageFactory.initElements(webDriver, this);
     }
+    public void loginAction(String email, String password) {
+        clickSignInFormButton();
+        enterEmail(email);
+        enterPassword(password);
+        clickSignInButton();
+    }
 
     public void clickSelectDepartureIcon(){
         waiter.until(ExpectedConditions.elementToBeClickable(selectDepartureIcon)).click();
