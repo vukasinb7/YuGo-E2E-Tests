@@ -34,7 +34,6 @@ public class YuGoHomePage {
     private WebElement pickRouteContinueButton;
 
 
-
     // ===================== Pick vehicle type form =====================
     @FindBy(how = How.XPATH, xpath = "//h2[text()='LUX']/../../..")
     private WebElement luxVehicleCard;
@@ -44,6 +43,20 @@ public class YuGoHomePage {
     private WebElement vanVehicleCard;
     @FindBy(how = How.CSS, css = "app-ride-pick-properties button:nth-child(2)")
     private WebElement pickVehicleTypeContinueButton;
+
+    // ===================== Login form ====================
+    @FindBy(how = How.CSS, css = "#signin-form-button")
+    private WebElement signInFormButton;
+    @FindBy(how = How.CSS, css = "#login-item mat-form-field:nth-child(1) input")
+    private WebElement emailInput;
+    @FindBy(how = How.CSS, css = "#login-item mat-form-field:nth-child(2) input")
+    private WebElement passwordInput;
+    @FindBy(how = How.CSS, css = "#signin-button")
+    private WebElement signInButton;
+    @FindBy(how = How.CSS, css = "#logout-button-div a")
+    private WebElement signOutButton;
+    @FindBy(how = How.CSS, css = ".errorMessage")
+    private WebElement signInErrorMessage;
 
 
     public YuGoHomePage(WebDriver webDriver){
@@ -71,5 +84,24 @@ public class YuGoHomePage {
     }
     public void clickVehicleTypeContinueButton(){
         waiter.until(ExpectedConditions.elementToBeClickable(pickVehicleTypeContinueButton)).click();
+    }
+
+    public void clickSignInFormButton(){
+        waiter.until(ExpectedConditions.elementToBeClickable(signInFormButton)).click();
+    }
+    public void enterEmail(String email){
+        waiter.until(ExpectedConditions.elementToBeClickable(emailInput)).sendKeys(email);
+    }
+    public void enterPassword(String password){
+        waiter.until(ExpectedConditions.elementToBeClickable(passwordInput)).sendKeys(password);
+    }
+    public void clickSignInButton(){
+        waiter.until(ExpectedConditions.elementToBeClickable(signInButton)).click();
+    }
+    public boolean isSignOutButtonClickable(){
+        return waiter.until(ExpectedConditions.elementToBeClickable(signOutButton)).isDisplayed();
+    }
+    public String getSignInErrorMessage(){
+        return waiter.until(ExpectedConditions.elementToBeClickable(signInErrorMessage)).getText();
     }
 }

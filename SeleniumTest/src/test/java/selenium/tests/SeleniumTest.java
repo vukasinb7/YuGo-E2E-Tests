@@ -1,6 +1,7 @@
 package selenium.tests;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,5 +33,25 @@ public class SeleniumTest {
         homePage.clickRouteContinueButton();
         homePage.selectLuxVehicle();
         homePage.clickVehicleTypeContinueButton();
+    }
+
+    @Test
+    void successfulLoginTest(){
+        YuGoHomePage homePage = new YuGoHomePage(webDriver);
+        homePage.clickSignInFormButton();
+        homePage.enterEmail("marko.markovic@email.com");
+        homePage.enterPassword("Password123");
+        homePage.clickSignInButton();
+        Assertions.assertTrue(homePage.isSignOutButtonClickable());
+    }
+
+    @Test
+    void unsuccessfulLoginTest(){
+        YuGoHomePage homePage = new YuGoHomePage(webDriver);
+        homePage.clickSignInFormButton();
+        homePage.enterEmail("awpaodw@dwadpmaw.com");
+        homePage.enterPassword("fdsgsfdg");
+        homePage.clickSignInButton();
+        Assertions.assertNotEquals("", homePage.getSignInErrorMessage());
     }
 }
