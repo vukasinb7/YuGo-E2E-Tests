@@ -78,10 +78,26 @@ public class SeleniumTest {
         Assertions.assertEquals(checkDestination, expectedDestination);
     }
     @Test
-    void successfulLoginTest(){
+    void successfulAdminLoginTest(){
         YuGoHomePage homePage = new YuGoHomePage(webDriver);
-        homePage.loginAction(PASSENGER_EMAIL,PASSENGER_PASSWORD);
+        homePage.loginAction(ADMIN_EMAIL, ADMIN_PASSWORD);
         Assertions.assertTrue(homePage.isSignOutButtonClickable());
+        Assertions.assertTrue(homePage.isAdminLoggedIn());
+    }
+    @Test
+    void successfulPassengerLoginTest(){
+        YuGoHomePage homePage = new YuGoHomePage(webDriver);
+        homePage.loginAction(PASSENGER_EMAIL, PASSENGER_PASSWORD);
+        Assertions.assertTrue(homePage.isSignOutButtonClickable());
+        Assertions.assertTrue(homePage.isPassengerLoggedIn());
+    }
+
+    @Test
+    void successfulDriverLoginTest(){
+        YuGoHomePage homePage = new YuGoHomePage(webDriver);
+        homePage.loginAction(DRIVER_EMAIL, DRIVER_PASSWORD);
+        Assertions.assertTrue(homePage.isSignOutButtonClickable());
+        Assertions.assertTrue(homePage.isDriverLoggedIn());
     }
 
     @Test
