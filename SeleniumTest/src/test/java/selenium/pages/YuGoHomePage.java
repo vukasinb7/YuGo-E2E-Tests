@@ -65,6 +65,10 @@ public class YuGoHomePage {
     private WebElement timePickerField;
     @FindBy(how = How.CSS, css = "app-ride-pick-time>div>div button:last-child")
     private WebElement timePickerContinueButton;
+    @FindBy(how = How.CSS, css = "div>mat-form-field:nth-of-type(1) mat-datepicker-toggle>button")
+    private WebElement calendarButton;
+
+
     // ==================== Login form ====================
     @FindBy(how = How.CSS, css = "#signin-form-button")
     private WebElement signInFormButton;
@@ -88,6 +92,10 @@ public class YuGoHomePage {
     // ==================== Searching driver ====================
     @FindBy(how = How.XPATH, xpath = "//app-searching-driver-screen/div/h1")
     private WebElement searchDriverMessage;
+    @FindBy(how = How.XPATH, xpath = "//app-searching-driver-screen//circle")
+    private WebElement loader;
+    @FindBy(how = How.CSS, css = "app-searching-driver-screen button")
+    private WebElement returnToHomePageButton;
 
     // ===================== Driver ====================
 
@@ -165,6 +173,9 @@ public class YuGoHomePage {
     public void selectLuxVehicle(){
         waiter.until(ExpectedConditions.elementToBeClickable(luxVehicleCard)).click();
     }
+    public void selectStandardVehicle(){
+        waiter.until(ExpectedConditions.elementToBeClickable(standardVehicleCard)).click();
+    }
     public void clickVehicleTypeContinueButton(){
         waiter.until(ExpectedConditions.elementToBeClickable(pickVehicleTypeContinueButton)).click();
     }
@@ -217,8 +228,18 @@ public class YuGoHomePage {
         waiter.until(ExpectedConditions.elementToBeClickable(timePickerContinueButton)).click();
     }
     public String getSearchDriverMessage(){
-        webDriver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
-        return waiter.until(ExpectedConditions.visibilityOf(searchDriverMessage)).getAttribute("value");
+        waiter.until(ExpectedConditions.invisibilityOfAllElements(loader));
+        waiter.until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(searchDriverMessage, "We are searching a driver for your ride, please wait.")));
+        return searchDriverMessage.getText();
+    }
+    public void selectDate(String month, String day){
+        waiter.until(ExpectedConditions.elementToBeClickable(calendarButton)).click();
+
+        String monthSelector = "//*[text()=' "+ month +" ']";
+        waiter.until(ExpectedConditions.elementToBeClickable(By.xpath(monthSelector))).click();
+
+        String daySelector = "//*[text()=' "+ day +" ']";
+        waiter.until(ExpectedConditions.elementToBeClickable(By.xpath(daySelector))).click();
     }
 
     public void driverOnlineIfNeeded(){

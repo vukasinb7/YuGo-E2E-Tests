@@ -10,14 +10,16 @@ import selenium.pages.YuGoHomePage;
 
 public class SeleniumTest {
     private WebDriver webDriver;
-
     private WebDriver webDriver1;
-    private String PASSENGER_EMAIL="pera.peric@email.com";
-    private String PASSENGER_PASSWORD="Password123";
-    private String DRIVER_EMAIL="perislav.peric@email.com";
-    private String DRIVER_PASSWORD="Password123";
-    private String ADMIN_EMAIL="marko.markovic@email.com";
-    private String ADMIN_PASSWORD="Password123";
+    private final String PASSENGER_EMAIL="pera.peric@email.com";
+    private final String PASSENGER_02_EMAIL = "darko.darkovic@email.com";
+    private final String PASSENGER_03_EMAIL = "parica.petkovic@email.com";
+    private final String PASSENGER_PASSWORD="Password123";
+    private final String DRIVER_EMAIL="perislav.peric@email.com";
+    private final String DRIVER_02_EMAIL="nikola.nikolic@email.com";
+    private final String DRIVER_PASSWORD="Password123";
+    private final String ADMIN_EMAIL="marko.markovic@email.com";
+    private final String ADMIN_PASSWORD="Password123";
 
     @BeforeEach
     void init(){
@@ -33,22 +35,56 @@ public class SeleniumTest {
 
     @Test
     void createRideSuccessfulTest(){
+        webDriver1 = new ChromeDriver();
         YuGoHomePage homePage = new YuGoHomePage(webDriver);
 
-        boolean isOpened= homePage.verifyPageOpened();
-        Assertions.assertTrue(isOpened);
+        boolean isOpenedPassenger = homePage.verifyPageOpened();
+        Assertions.assertTrue(isOpenedPassenger);
 
+        YuGoHomePage homePageDriver = new YuGoHomePage(webDriver1);
+
+        boolean isOpenedDriver = homePageDriver.verifyPageOpened();
+        Assertions.assertTrue(isOpenedDriver);
+
+        homePageDriver.loginAction(DRIVER_02_EMAIL,DRIVER_PASSWORD);
         homePage.loginAction(PASSENGER_EMAIL, PASSENGER_PASSWORD);
         homePage.clickSelectDepartureIcon();
         homePage.clickOnMap(-10, 20);
         homePage.clickSelectDestinationIcon();
         homePage.clickOnMap(45, -35);
         homePage.clickRouteContinueButton();
-        homePage.selectLuxVehicle();
+        homePage.selectStandardVehicle();
         homePage.clickVehicleTypeContinueButton();
-        homePage.addPassenger("darko.darkovic@email.com");
+        homePage.addPassenger(PASSENGER_03_EMAIL);
         homePage.clickAddPassengersContinueButton();
         homePage.clickTimePickerContinueButton();
+
+        homePageDriver.driverAcceptedRide();
+        webDriver1.close();
+
+        String message = homePage.getSearchDriverMessage();
+        String expectedMessage = "Driver is on his way. Estimated time of arrival: ";
+        Assertions.assertTrue(message.contains(expectedMessage));
+
+    }
+    @Test
+    void createScheduledRideTest(){
+        YuGoHomePage homePage = new YuGoHomePage(webDriver);
+        homePage.loginAction(PASSENGER_02_EMAIL, PASSENGER_PASSWORD);
+        homePage.clickSelectDepartureIcon();
+        homePage.clickOnMap(-10, 20);
+        homePage.clickSelectDestinationIcon();
+        homePage.clickOnMap(45, -35);
+        homePage.clickRouteContinueButton();
+        homePage.selectStandardVehicle();
+        homePage.clickVehicleTypeContinueButton();
+        homePage.clickAddPassengersContinueButton();
+        homePage.selectDate("FEB", "15");
+        homePage.clickTimePickerContinueButton();
+
+        String message = homePage.getSearchDriverMessage();
+        String expectedMessage = "The ride has been scheduled. You will get a confirmation notification, 30 minutes before ride.";
+        Assertions.assertEquals(expectedMessage, message);
     }
     @Test
     void createRideUnsuccessfulTest(){
@@ -71,6 +107,10 @@ public class SeleniumTest {
         homePage.clickVehicleTypeContinueButton();
         homePage.clickAddPassengersContinueButton();
         homePage.clickTimePickerContinueButton();
+
+        String message = homePage.getSearchDriverMessage();
+        String expectedMessage = "We couldn't find available driver, please try again later.";
+        Assertions.assertEquals(expectedMessage, message);
     }
     @Test
     void pickLocationWithoutMarkersTest(){
