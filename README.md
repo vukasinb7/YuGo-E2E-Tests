@@ -2,7 +2,7 @@
 
 ## YuGo Hailing App
 
-YuGo is mobile and web ride-hailing app designed to provide an efficient and convenient transportation solution to its users. Yugo was developed as out college project. Similar to Uber and Lyft, YuGo allows users to request a ride from their current location and connect with a nearby driver for a reliable and safe trip.
+YuGo is mobile and web ride-hailing app designed to provide an efficient and convenient transportation solution to its users. Yugo was developed as our college project. Similar to Uber and Lyft, YuGo allows users to request a ride from their current location and connect with a nearby driver for a reliable and safe trip.
 
 With YuGo, users can easily track their ride in real-time, communicate with their driver and many other things. The app offers a variety of ride options, including standard, luxury, and shared rides, to cater to different preferences and budgets.
 
@@ -19,7 +19,7 @@ For authentication, the app uses JWT and generates access and refresh tokens upo
 The app has three different roles: driver, passenger, and admin. Each role has different permissions and access levels within the app. STOMP Websockets were used for communication between users, allowing for real-time messaging and updates.
 
 The backend layer of YuGo features a Python script for vehicle movement simulation. This powerful tool allowed us to test and optimize routing algorithms, improving the accuracy and efficiency of the app's service.
-## Frontend
+## Web Frontend
 The frontend of the YuGo app is designed with a modern and minimalistic approach, providing a clean and intuitive user experience. The app was developed using the Angular framework.
 
 For displaying maps and locations, the team used OpenStreetMap, this allowed the app to provide accurate and reliable location data to both drivers and passengers. To ensure consistency across the codebase, the team utilized ESLint. 
